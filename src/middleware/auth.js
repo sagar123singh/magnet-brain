@@ -2,20 +2,14 @@ const jwt = require('jsonwebtoken')
 const productModel = require("../model/productModel")
 const validator = require("../validator/validator")
 
-const Authorise = async function(req, res, next){
+const Auth = async function(req, res, next){
     
    try{
   let token = req.headers["x-auth-token"]
     if(!token) {return res.status(400).send({Status:false, msg:"Token must be present"})}
 
     let decodedToken = jwt.verify(token, 'sagar123singh123solanki')
-    if(!decodedToken) {return res.status(400).send({status:false, msg:"Invalid token id"})}
-      
-
-   if(userId=req.body.userId){
-    if(decodedToken.userId != req.body.userId) return res.status(400).send({status:false, msg:"You are not authorised user"})
-   }
-        
+    if(!decodedToken) {return res.status(400).send({status:false, msg:"Invalid token id"})}        
  next()
 }
 catch(err){
@@ -25,4 +19,4 @@ catch(err){
 }
 
 }
-module.exports.Authorise=Authorise
+module.exports.Auth=Auth
