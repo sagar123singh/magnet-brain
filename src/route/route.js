@@ -9,9 +9,9 @@ const middleware=require('../middleware/auth')
 
 router.post('/register', sellerController.createSeller)
 router.post('/login', sellerController.loginSeller)
-router.post('/createProduct',middleware.Auth, productController.createProduct )
-router.get('/getTopProduct',middleware.Auth,productController.getTop5Product)
-router.get('/todaysRevenue',middleware.Auth,productController.todayTotalRevenue)
+router.post('/createProduct/:sellerId',middleware.Auth, productController.createProduct )
+router.get('/getTopProduct/:sellerId',middleware.Auth,productController.getTop5Product)
+router.get('/todaysRevenue/:sellerId',middleware.Auth,productController.todayTotalRevenue)
 
 
 

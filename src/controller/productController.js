@@ -1,13 +1,31 @@
 const productModel=require('../model/productModel')
+const sellerModel=require('../model/sellerModel')
 const validator = require('../validator/validator');
 
 const createProduct=async function(req,res){
     try{
-        const body=req.body
-        const {productName,quantity,amount,NoOfProductSale,isDeleted}=body
+        const sellerId = req.params.sellerId;
 
+        
+        const body=req.body
+        const { productName,quantity,amount,NoOfProductSale,isDeleted,currentDate}=body
+
+
+        // Seller Id not valid
+        if(!validator.isValidobjectId(sellerId)) {
+            return res.status(400).send({status:false, msg:"SellerId is not valid"})
+        }
         if (!validator.isValidBody(body)) {
             return res.status(400).send({ status: false, msg: "User body should not be empty" });
+        }
+
+          //Validate userId
+        if (!validator.isValid(sellerId)) {
+            return res.status(400).send({ status: false, msg: "sellerId is required" });
+        }
+          // Validation of userId
+          if(!validator.isValidobjectId(sellerId)) {
+            return res.status(400).send({ status: false, msg: "Invalid sellerId"});
         }
         if (!validator.isValid(productName)) {
             return res.status(400).send({ status: false, msg: "product name is required" });
@@ -27,8 +45,14 @@ const createProduct=async function(req,res){
             return res.status(400).send({ status: false, msg: "plz mention product the product deleted or not" });
         }
 
+        let seller = await sellerModel.findById(sellerId);
+        if(!seller) {
+            return res.status(404).send({ status: false, msg: "sellerId not found"})
+        }
 
-        const productData=await productModel.create(body)
+
+        const data = {sellerId,productName,quantity,amount,NoOfProductSale,isDeleted,currentDate };
+        const productData=await productModel.create(data)
         res.status(201).send({status:true,msg:productData})
 
     }catch(err){
@@ -40,6 +64,17 @@ const createProduct=async function(req,res){
 
 const getTop5Product=async function(req,res){
     try{
+        const sellerId = req.params.sellerId;
+
+        // Seller Id not valid
+        if(!validator.isValidobjectId(sellerId)) {
+            return res.status(400).send({status:false, msg:"SellerId is not valid"})
+        }
+        let seller = await sellerModel.findById(sellerId);
+        if(!seller) {
+            return res.status(404).send({ status: false, msg: "sellerId not found"})
+        }
+
         const top5Sale=await productModel.find({isDeleted:false}).sort({NoOfProductSale:-1}).limit(5)
         res.status(200).send({status:true,count:top5Sale.length, data:top5Sale})
 
@@ -50,7 +85,17 @@ const getTop5Product=async function(req,res){
 
 const todayTotalRevenue=async function (req,res){
     try{
-const data=await productModel.find({currentDate:"2022-08-25"})
+        const sellerId = req.params.sellerId;
+
+        // Seller Id not valid
+        if(!validator.isValidobjectId(sellerId)) {
+            return res.status(400).send({status:false, msg:"SellerId is not valid"})
+        }
+        let seller = await sellerModel.findById(sellerId);
+        if(!seller) {
+            return res.status(404).send({ status: false, msg: "sellerId not found"})
+        }
+const data=await productModel.find({currentDate:"2022-08-27"})
 let totalRevenue=null;
 for(let i=0;i<data.length;i++){
     totalRevenue+=data[i].amount

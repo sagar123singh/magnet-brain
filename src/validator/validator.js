@@ -11,9 +11,6 @@ const isValidBody = function (requestBody) {
     return Object.keys(requestBody).length > 0;
 }
 
-const isValidTitle = function (title) {
-    return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
-}
 
 const isValidNumber = function (value) {
     if (!(/^(\+\d{1,3}[- ]?)?\d{10}$/.test(value.trim()))) {
@@ -37,13 +34,16 @@ const isValidPassword = function(value) {
 }
 
 
+const isValidobjectId = (objectId) => {
+    return mongoose.Types.ObjectId.isValid(objectId)
+}
 
 
 
 
 module.exports.isValid = isValid
 module.exports.isValidBody = isValidBody
-module.exports.isValidTitle = isValidTitle
 module.exports.isValidNumber = isValidNumber
 module.exports.isValidEmail = isValidEmail
 module.exports.isValidPassword = isValidPassword
+module.exports.isValidobjectId=isValidobjectId
